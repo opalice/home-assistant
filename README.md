@@ -29,14 +29,40 @@ Une intégration Home Assistant qui permet d'utiliser OpenAI ChatGPT pour analys
 6. Sélectionnez "Integration" comme catégorie
 7. Cliquez sur "Add"
 8. Recherchez "OpenAI Assistant" et installez-le
-9. Redémarrez Home Assistant
+9. HACS copie automatiquement le fichier du panneau dans `www/community/openai-assistant/`
+10. Ajoutez le panneau suivant à votre `configuration.yaml` :
 
-### Installation manuelle
+    ```yaml
+    panel_custom:
+      - name: openai-assistant
+        sidebar_title: OpenAI Assistant
+        sidebar_icon: mdi:robot
+        module_url: /hacsfiles/openai-assistant/openai-assistant-panel.js
+        url_path: openai-assistant
+        embed_iframe: false
+        require_admin: false
+    ```
+11. Redémarrez Home Assistant
+12. Ouvrez le panneau via la barre latérale ou `http://<ip>:8123/openai-assistant`
 
-1. Téléchargez ce repository
-2. Copiez le dossier `custom_components/openai_assistant` vers votre dossier `custom_components`
-3. Copiez le dossier `www/openai-assistant` vers votre dossier `www`
-4. Redémarrez Home Assistant
+### Installation manuelle (depuis GitHub)
+
+1. Téléchargez l'archive de ce repository ou clonez-le
+2. Copiez le dossier `custom_components/openai_assistant` vers votre dossier `<config>/custom_components/`
+3. Copiez le dossier `www/openai-assistant` vers votre dossier `<config>/www/openai-assistant/`
+4. Ajoutez le panneau suivant à votre `configuration.yaml` :
+
+    ```yaml
+    panel_custom:
+      - name: openai-assistant
+        sidebar_title: OpenAI Assistant
+        sidebar_icon: mdi:robot
+        module_url: /local/openai-assistant/openai-assistant-panel.js
+        url_path: openai-assistant
+        embed_iframe: false
+        require_admin: false
+    ```
+5. Redémarrez Home Assistant
 
 ## ⚙️ Configuration
 

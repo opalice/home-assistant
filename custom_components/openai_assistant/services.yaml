@@ -1,0 +1,44 @@
+ask_chatgpt:
+  name: Poser une question à ChatGPT
+  description: Pose une question à ChatGPT avec le contexte Home Assistant
+  fields:
+    message:
+      name: Message
+      description: La question ou le message à envoyer à ChatGPT
+      required: true
+      selector:
+        text:
+          multiline: true
+    include_context:
+      name: Inclure le contexte
+      description: Inclure automatiquement le contexte du système Home Assistant
+      default: true
+      selector:
+        boolean:
+
+analyze_system:
+  name: Analyser le système
+  description: Demande à ChatGPT d'analyser votre installation Home Assistant
+  fields:
+    focus_area:
+      name: Zone de focus
+      description: Zone spécifique à analyser (optionnel)
+      selector:
+        text:
+
+execute_suggestion:
+  name: Exécuter une suggestion
+  description: Exécute une suggestion proposée par ChatGPT
+  fields:
+    suggestion_id:
+      name: ID de la suggestion
+      description: L'identifiant unique de la suggestion à exécuter
+      required: true
+      selector:
+        text:
+    confirmed:
+      name: Confirmé
+      description: Confirmation que vous souhaitez exécuter cette suggestion
+      required: true
+      selector:
+        boolean:

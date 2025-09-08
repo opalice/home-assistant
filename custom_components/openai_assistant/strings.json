@@ -1,0 +1,38 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration OpenAI Assistant",
+        "description": "Configurez votre intégration OpenAI Assistant. Vous aurez besoin d'une clé API OpenAI que vous pouvez obtenir sur [platform.openai.com]({docs_url}).",
+        "data": {
+          "name": "Nom de l'intégration",
+          "api_key": "Clé API OpenAI",
+          "model": "Modèle GPT",
+          "max_tokens": "Tokens maximum par réponse",
+          "temperature": "Température (créativité)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de se connecter à l'API OpenAI",
+      "invalid_auth": "Clé API invalide",
+      "rate_limit": "Limite de taux atteinte, réessayez plus tard",
+      "unknown": "Erreur inconnue"
+    },
+    "abort": {
+      "already_configured": "Cette clé API est déjà configurée"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options OpenAI Assistant",
+        "data": {
+          "model": "Modèle GPT",
+          "max_tokens": "Tokens maximum par réponse",
+          "temperature": "Température (créativité)"
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
-import { LitElement, html, css } from 'https://unpkg.com/lit@2?module';
+// Import lit from a local copy to avoid unresolved module errors
+import { LitElement, html, css } from './lit.js';
 
 class OpenAIAssistantPanel extends LitElement {
   static styles = css`

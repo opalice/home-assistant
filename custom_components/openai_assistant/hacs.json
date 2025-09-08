@@ -1,0 +1,9 @@
+{
+  "name": "OpenAI Assistant pour Home Assistant",
+  "content_in_root": false,
+  "filename": "openai_assistant.zip",
+  "render_readme": true,
+  "domains": ["sensor"],
+  "homeassistant": "2023.1.0",
+  "iot_class": "cloud_polling"
+}

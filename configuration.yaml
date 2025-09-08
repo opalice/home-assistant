@@ -1,0 +1,146 @@
+# Configuration Home Assistant avec OpenAI Assistant
+
+# Configuration de base
+homeassistant:
+  name: Home
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  elevation: !secret home_elevation
+  unit_system: metric
+  time_zone: Europe/Paris
+  customize: !include customize.yaml
+
+# Activation du frontend
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Configuration HTTP
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+
+# Découverte automatique
+discovery:
+
+# Historique
+history:
+
+# Enregistreur
+recorder:
+  purge_keep_days: 30
+
+# Logs pour debug OpenAI Assistant
+logger:
+  default: info
+  logs:
+    custom_components.openai_assistant: debug
+
+# Panel pour OpenAI Assistant
+panel_custom:
+  - name: openai-assistant
+    sidebar_title: OpenAI Assistant
+    sidebar_icon: mdi:robot
+    js_url: /local/openai-assistant/openai-assistant-panel.js
+    url_path: openai-assistant
+    embed_iframe: false
+    require_admin: false
+
+# Automatisation exemple pour utiliser OpenAI Assistant
+automation:
+  - alias: "Analyse quotidienne OpenAI"
+    description: "Lance une analyse quotidienne du système avec OpenAI"
+    trigger:
+      - platform: time
+        at: "08:00:00"
+    condition:
+      - condition: state
+        entity_id: sensor.openai_assistant_status
+        state: "ready"
+    action:
+      - service: openai_assistant.analyze_system
+        data:
+          focus_area: "optimisation énergétique"
+
+  - alias: "Notification suggestions OpenAI"
+    description: "Notifie quand OpenAI propose des suggestions"
+    trigger:
+      - platform: event
+        event_type: openai_assistant_response
+    condition:
+      - condition: template
+        value_template: "{{ 'suggestion' in trigger.event.data.response.lower() }}"
+    action:
+      - service: notify.mobile_app_your_phone
+        data:
+          title: "🤖 OpenAI Assistant"
+          message: "Nouvelles suggestions d'optimisation disponibles"
+          data:
+            actions:
+              - action: "open_openai_panel"
+                title: "Voir les suggestions"
+
+# Script exemple pour actions rapides
+script:
+  openai_quick_analysis:
+    alias: "Analyse rapide OpenAI"
+    sequence:
+      - service: openai_assistant.ask_chatgpt
+        data:
+          message: "Fais une analyse rapide de mon système et donne-moi 3 recommandations prioritaires"
+          include_context: true
+
+  openai_security_check:
+    alias: "Vérification sécurité OpenAI"
+    sequence:
+      - service: openai_assistant.ask_chatgpt
+        data:
+          message: "Vérifie la sécurité de ma configuration Home Assistant et identifie les vulnérabilités potentielles"
+          include_context: true
+
+# Capteurs personnalisés pour monitoring
+sensor:
+  - platform: template
+    sensors:
+      openai_usage_today:
+        friendly_name: "Utilisation OpenAI aujourd'hui"
+        value_template: >
+          {% set conversations = state_attr('sensor.openai_assistant_status', 'conversations_today') %}
+          {{ conversations if conversations else 0 }}
+        unit_of_measurement: "conversations"
+        icon_template: mdi:chat
+
+      openai_last_suggestion:
+        friendly_name: "Dernière suggestion OpenAI"
+        value_template: >
+          {% set suggestions = state_attr('sensor.openai_assistant_status', 'total_suggestions') %}
+          {{ suggestions if suggestions else 0 }}
+        icon_template: mdi:lightbulb-on
+
+# Input pour configuration dynamique
+input_boolean:
+  openai_auto_analysis:
+    name: "Analyse automatique OpenAI"
+    icon: mdi:robot
+    initial: true
+
+input_select:
+  openai_analysis_frequency:
+    name: "Fréquence d'analyse"
+    options:
+      - "Quotidienne"
+      - "Hebdomadaire"
+      - "Mensuelle"
+      - "Manuelle"
+    initial: "Quotidienne"
+    icon: mdi:calendar-clock
+
+input_number:
+  openai_max_suggestions:
+    name: "Suggestions maximum par analyse"
+    initial: 5
+    min: 1
+    max: 20
+    step: 1
+    icon: mdi:counter

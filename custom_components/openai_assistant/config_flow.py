@@ -5,7 +5,11 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-import openai
+from openai import (
+    OpenAI,
+    AuthenticationError,
+    RateLimitError,
+)
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME
@@ -47,21 +51,19 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            # Test the API key
-            openai.api_key = user_input[CONF_API_KEY]
-            
-            # Test with a simple request
-            await self.hass.async_add_executor_job(
-                openai.ChatCompletion.create,
-                {
-                    "model": user_input[CONF_MODEL],
-                    "messages": [{"role": "user", "content": "Test"}],
-                    "max_tokens": 10
-                }
-            )
-        except openai.AuthenticationError:
+            client = OpenAI(api_key=user_input[CONF_API_KEY])
+
+            def _test_call() -> None:
+                client.chat.completions.create(
+                    model=user_input[CONF_MODEL],
+                    messages=[{"role": "user", "content": "Test"}],
+                    max_tokens=10,
+                )
+
+            await self.hass.async_add_executor_job(_test_call)
+        except AuthenticationError:
             errors["base"] = "invalid_auth"
-        except openai.RateLimitError:
+        except RateLimitError:
             errors["base"] = "rate_limit"
         except Exception as e:
             _LOGGER.exception("Unexpected error testing OpenAI API")
@@ -78,8 +80,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         return self.async_show_form(
-            step_id="user", 
-            data_schema=STEP_USER_DATA_SCHEMA, 
+            step_id="user",
+            data_schema=STEP_USER_DATA_SCHEMA,
             errors=errors,
             description_placeholders={
                 "docs_url": "https://platform.openai.com/api-keys"

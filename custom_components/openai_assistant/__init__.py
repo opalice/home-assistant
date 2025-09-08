@@ -13,14 +13,14 @@ from homeassistant.helpers.area_registry import async_get as async_get_area_regi
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.const import CONF_API_KEY, CONF_NAME
 
-import openai
+from openai import OpenAI
 import json
 import asyncio
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "openai_assistant"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 CONF_MODEL = "model"
 CONF_MAX_TOKENS = "max_tokens"
@@ -65,7 +65,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     temperature = entry.data.get(CONF_TEMPERATURE, DEFAULT_TEMPERATURE)
 
     # Initialize OpenAI client
-    openai.api_key = api_key
+    client = OpenAI(api_key=api_key)
 
     # Store configuration
     hass.data[DOMAIN][entry.entry_id] = {
@@ -75,6 +75,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "temperature": temperature,
         "conversations": [],
         "suggestions": {},
+        "client": client,
     }
 
     # Set up platforms
@@ -129,9 +130,11 @@ Règles importantes:
             
             messages.append({"role": "user", "content": message})
             
+            client = config["client"]
+
             # Call OpenAI API
             response = await asyncio.to_thread(
-                openai.ChatCompletion.create,
+                client.chat.completions.create,
                 model=config["model"],
                 messages=messages,
                 max_tokens=config["max_tokens"],
@@ -303,5 +306,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
-    
+
     return unload_ok

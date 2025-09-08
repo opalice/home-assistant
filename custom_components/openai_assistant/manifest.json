@@ -1,7 +1,7 @@
 {
   "domain": "openai_assistant",
   "name": "OpenAI Assistant pour Home Assistant",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "documentation": "https://github.com/custom-components/openai-assistant",
   "issue_tracker": "https://github.com/custom-components/openai-assistant/issues",
   "dependencies": [],
